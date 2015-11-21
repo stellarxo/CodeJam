@@ -2,15 +2,18 @@ import random
 import math
 
 import numpy as np
+import CrossEntropyCost as cecost
+import Quadratic Cost as qcost
 
 
 class NeuralNet(object):
-    def __init__(self, layers):
+    def __init__(self, layers, cost = cecost:
 
         self.layers = len(layers)
         self.neurons_in_layer = layers
         self.bias = [np.random.randn(x, 1) for x in layers[1:]]
         self.weights = [np.random.randn(y, x) for x, y in zip(layers[:-1], layers[1:])]
+        self.cost = cost
 
     def feed(self, x):
 
@@ -23,13 +26,13 @@ class NeuralNet(object):
             acts.append(act)
         return acts[-1]
 
-    def train(self, minibatch_s, train_set, learn_rate, epoch):
+    def train(self, minibatch_s, train_set, learn_rate, epoch, lmbda = 0.0):
 
         for e in xrange(epoch):
             random.shuffle(train_set)
             minibatches = [train_set[k:k + minibatch_s] for k in xrange(0, len(train_set), minibatch_s)]
             for mini_batch in minibatches:
-                self.update(learn_rate, minibatch_s, mini_batch)
+                self.update(learn_rate, minibatch_s, mini_batch, lmbda)
                 # s= str(eval(minibatch))
                 # print s
             print e
@@ -37,7 +40,7 @@ class NeuralNet(object):
             #    print "bias",b
             #   print "weights",w
 
-    def update(self, learn_rate, minibatch_size, mini_batch):
+    def update(self, learn_rate, minibatch_size, mini_batch, lmbda):
 
         nb = [np.zeros(b.shape) for b in self.bias]
         nw = [np.zeros(w.shape) for w in self.weights]
@@ -54,26 +57,29 @@ class NeuralNet(object):
         # print nw
 
         rate = learn_rate / minibatch_size
-        self.weights = [sw - rate * n for sw, n in zip(self.weights, nw)]
-        self.bias = [sb - rate * b for sb, b in zip(self.bias, nb)]
 
-    def back_prop(self, inp, output):
-        # print inp
+        self.weights = [(1-eta*(lmbda/n)) * sw - rate * n for sw, n in zip(self.weights, nw)]
+        self.bias = [sb - rate2 * b for sb, b in zip(self.bias, nb)]
+
+    def back_prop(self, input, output):
+        # print input
         nweights = [np.zeros(w.shape) for w in self.weights]
         nbias = [np.zeros(b.shape) for b in self.bias]
-        activation = np.array(inp)
+
+        activation = np.array(input)
         activations = [activation]
         zv = []
-        for x, y in zip(self.bias, self.weights):
-            z = np.dot(y, activation) + x
+
+        for b, w in zip(self.bias, self.weights):
+            z = np.dot(w, activation) + b
             zv.append(z)
             activation = self.sigmoid(z)
             activations.append(activation)
         #                print zv
         #                print activations
         output = np.array(output)
-        cd = self.cost_derivative(activations[-1], output)
-        delta = np.multiply(cd, self.sigmoidpr(zv[-1]))
+        delta = (self.cost).delta(zv[-1], activations[-1], output)
+
         #                print activations[-2].transpose()
         #                print delta
         # print activations[-2].shape
@@ -81,6 +87,8 @@ class NeuralNet(object):
         nweights[-1] = np.dot(delta, activations[-2].transpose())
         nbias[-1] = delta
         ds = [delta]
+
+        # xrange?
         for l in range(2, self.layers):
             m = np.dot(self.weights[-l + 1].transpose(), delta)
             n = self.sigmoidpr(zv[-l])
@@ -100,9 +108,6 @@ class NeuralNet(object):
             perc.append((x - out) / x)
         err = sum(perc) / len(perc)
         return err
-
-    def cost_derivative(self, a, y):
-        return (a - y)
 
     def sigmoid(self, x):
         return 1 / (1 + np.exp(-x))
