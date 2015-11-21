@@ -14,72 +14,80 @@ class getData:
 		self.REMISSED_PATIENTS = {}
 		self.RESISTANT_PATIENTS = {}
 		self.read()
+		self.toFloat()
+
 	def read(self):
 		with open('trainingData.csv', 'r') as csvfile:
 			spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-			
+			counter = 1
 			for row in spamreader:
 				for ind, var in enumerate(row[1:]):
 					if var == 'COMPLETE_REMISSION':
-						REMISSED_PATIENTS["Patient"+str(counter)]=row
+						self.REMISSED_PATIENTS["Patient"+str(counter)]=row
 					else:
-						RESISTANT_PATIENTS["Patient"+str(counter)]=row
+						self.RESISTANT_PATIENTS["Patient"+str(counter)]=row
 				counter = counter+1
 
-		for patient in REMISSED_PATIENTS:
-			for ind, var in enumerate(REMISSED_PATIENTS[patient]):
+		for patient in self.REMISSED_PATIENTS:
+			for ind, var in enumerate(self.REMISSED_PATIENTS[patient]):
 				# Yes/No responses
-						if var in ('YES', 'COMPLETE_REMISSION', 'POS', 'F'):
+						if var in ('Yes','YES', 'COMPLETE_REMISSION', 'POS', 'F'):
 							var = '1'
-							REMISSED_PATIENTS[patient][ind] = var 
-						if var in ('No', 'RESISTANT', 'NEG', 'M') :
+							self.REMISSED_PATIENTS[patient][ind] = var 
+						if var in ('NotDone','No','NO', 'RESISTANT', 'NEG', 'M') :
 							var='-1'
-							REMISSED_PATIENTS[patient][ind] = var 
+							self.REMISSED_PATIENTS[patient][ind] = var 
 						# No information
-						if var == 'NA':
+						if var in ('NA','ND'):
 							var = '0'
-							REMISSED_PATIENTS[patient][ind] = var  
+							self.REMISSED_PATIENTS[patient][ind] = var  
 
 						# Chemo type
 						if var == 'Anthra-HDAC':
 							var = '0'
-							REMISSED_PATIENTS[patient][ind] = var  
+							self.REMISSED_PATIENTS[patient][ind] = var  
 						if var == 'HDAC-Plus':
 							var = '1'
-							REMISSED_PATIENTS[patient][ind] = var 
+							self.REMISSED_PATIENTS[patient][ind] = var 
 						if var == 'Flu-HDAC':
 							var = '2'
-							REMISSED_PATIENTS[patient][ind] = var 
+							self.REMISSED_PATIENTS[patient][ind] = var 
 						if var == 'StdAraC-Plus':
 							var = '3'
-							REMISSED_PATIENTS[patient][ind] = var 
+							self.REMISSED_PATIENTS[patient][ind] = var 
 
-		for patient in RESISTANT_PATIENTS:
-			for ind, var in enumerate(RESISTANT_PATIENTS[patient]):
+		for patient in self.RESISTANT_PATIENTS:
+			for ind, var in enumerate(self.RESISTANT_PATIENTS[patient]):
 				# Yes/No responses
 						if var in ('YES', 'COMPLETE_REMISSION', 'POS', 'F'):
 							var = '1'
-							RESISTANT_PATIENTS[patient][ind] = var 
+							self.RESISTANT_PATIENTS[patient][ind] = var 
 						if var in ('No', 'RESISTANT', 'NEG', 'M') :
 							var='-1'
-							RESISTANT_PATIENTS[patient][ind] = var 
+							self.RESISTANT_PATIENTS[patient][ind] = var 
 						# No information
 						if var == 'NA':
 							var = '0'
-							RESISTANT_PATIENTS[patient][ind] = var  
+							self.RESISTANT_PATIENTS[patient][ind] = var  
 
 						# Chemo type
 						if var == 'Anthra-HDAC':
 							var = '0'
-							RESISTANT_PATIENTS[patient][ind] = var  
+							self.RESISTANT_PATIENTS[patient][ind] = var  
 						if var == 'HDAC-Plus':
 							var = '1'
-							RESISTANT_PATIENTS[patient][ind] = var 
+							self.RESISTANT_PATIENTS[patient][ind] = var 
 						if var == 'Flu-HDAC':
 							var = '2'
-							RESISTANT_PATIENTS[patient][ind] = var 
+							self.RESISTANT_PATIENTS[patient][ind] = var 
 						if var == 'StdAraC-Plus':
 							var = '3'
-							RESISTANT_PATIENTS[patient][ind] = var 
+							self.RESISTANT_PATIENTS[patient][ind] = var 
 					
+	def toFloat(self):
+		for x,y in self.REMISSED_PATIENTS.items():
+			float_elements = []
+			for m in y[1:]:
+				float_elements.append(float(m))
+				self.REMISSED_PATIENTS[x] = float_elements
 

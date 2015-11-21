@@ -6,7 +6,6 @@ class RegModel(object):
 		self.parameters = np.random.randn(feature_size+1,1)
 		self.old_parameters = np.zeros(self.parameters.shape)
 		self.cost = 100
-		print self.parameters
 
 	def train(self, train_set, eta):
 		random.shuffle(train_set)
