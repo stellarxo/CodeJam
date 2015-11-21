@@ -107,7 +107,14 @@ if __name__ =='__main__':
     
     g = gd()
     train_data = g.get_trainset(0.8)
+    train_set = train_data[0]
+    print train_set
+    test_set = train_data[1]
     n = NeuralNet([266,100,100,2])
-    n.train(10,train_data,0.001,1000)
+    n.train(10,train_set,0.01,100)
+
+    print n.feed(test_set[0][1])
+    print n.feed(test_set[0][0])
+
 
               

@@ -143,7 +143,10 @@ class getData:
 		train_out = train_out + [x[266] for y,x in self.RESISTANT_PATIENTS.items()]
 		train_in = train_in + [x[:266] for y,x in self.RESISTANT_PATIENTS.items()]
 		trn_data = zip(train_out,train_in)
-		return trn_data 
+		tst_data = test_data + test_datares
+		print trn_data
+		print tst_data
+		return trn_data
 
 	
 			
