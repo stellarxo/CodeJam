@@ -91,3 +91,18 @@ class getData:
 				float_elements.append(float(m))
 				self.REMISSED_PATIENTS[x] = float_elements
 
+	def scaleDown(self):
+		for x,y in self.REMISSED_PATIENTS.items():
+			scaled = []
+	def get_trainset(self,split):
+		split = int(split*len(REMISSED_PATIENTS.items()))
+		train_data = REMISSED_PATIENTS.items()[:split]
+		test_data = REMISSED_PATIENTS.items()[split:]
+		train_out =[y[266] for x,y in train_data]
+		train_in = [x[:266] for x,y in train_data]
+		trn_data = zip(train_out,train_in)
+		return trn_data
+
+	
+			
+
