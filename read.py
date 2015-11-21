@@ -13,20 +13,47 @@ class getData:
 	def __init__(self):
 		self.REMISSED_PATIENTS = {}
 		self.RESISTANT_PATIENTS = {}
+		self.M_Rem_Pat = {}
+		self.F_Rem_Pat = {}
+		self.M_Res_Pat = {}
+		self.F_Res_Pat = {}
 		self.read()
 		self.toFloat()
 
 	def read(self):
+		with open('trainingData.txt', "rU") as infile, open('trainingData.csv', 'wb') as outfile:
+		    in_txt = csv.reader(infile, delimiter = '\t')
+		    out_csv = csv.writer(outfile)
+		    out_csv.writerows(in_txt)
+		infile.close
+		outfile.close
+
 		with open('trainingData.csv', 'r') as csvfile:
 			spamreader = csv.reader(csvfile, delimiter=',', quotechar='"')
-			counter = 1
+			counter = 0
 			for row in spamreader:
 				for ind, var in enumerate(row[1:]):
 					if var == 'COMPLETE_REMISSION':
 						self.REMISSED_PATIENTS["Patient"+str(counter)]=row
-					else:
+					if var == 'RESISTANT':
 						self.RESISTANT_PATIENTS["Patient"+str(counter)]=row
 				counter = counter+1
+
+		# Parses male and female for remissed
+		for patient in REMISSED_PATIENTS:
+			for ind, var in enumerate(REMISSED_PATIENTS[patient]):
+				if var == 'M':
+					M_Rem_Pat[patient] = REMISSED_PATIENTS[patient]
+				if var == 'F':
+					F_Rem_Pat[patient] = REMISSED_PATIENTS[patient]
+
+		# Parses male and female for resistant
+		for patient in RESISTANT_PATIENTS:
+			for ind, var in enumerate(RESISTANT_PATIENTS[patient]):
+				if var == 'M':
+					M_Res_Pat[patient] = RESISTANT_PATIENTS[patient]
+				if var == 'F':
+					F_Res_Pat[patient] = RESISTANT_PATIENTS[patient]
 
 		for patient in self.REMISSED_PATIENTS:
 			for ind, var in enumerate(self.REMISSED_PATIENTS[patient]):
