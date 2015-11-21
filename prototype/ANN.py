@@ -8,7 +8,9 @@ class NeuralNet(object):
                 self.neurons_in_layer = layers
                 self.bias =[np.random.randn(x,1) for x in layers[1:]]
                 self.weights =[np.random.randn(y,x) for x,y in zip(layers[:-1],layers[1:])]
+
         def feed(self,x):
+
                 act = x
                 acts = [x]        
                 zv=[]
@@ -100,26 +102,12 @@ class NeuralNet(object):
                 return 1/(1+np.exp(-x))
         def sigmoidpr(self,x):
                 return (1-self.sigmoid(x))*(self.sigmoid(x))
-
+from read import getData as gd
 if __name__ =='__main__':
-    nn = NeuralNet([1,10,10,1])
     
-    f = open('file','w')
-    iterator = [x/1000.0 for x in xrange(0,1000,1)]
-    hh = []
-    for i in iterator:
-       a = 0.5*(math.sin(i)+1)
-       s = i,a 
-       s = str(s) 
-       f.write(s)
-       f.write('\n')
-       hh.append((i,a))
- 
-    f.close()
-    nn.train(1000,hh,0.10,1000)
-    run = 1
-    while(run):    
-        i = input("number: ")
-        print nn.feed(i)
-        run = input("run? ")
+    g = gd()
+    train_data = g.get_trainset(0.8)
+    n = NeuralNet([266,100,100,2])
+    n.train(10,train_data,0.001,1000)
+
               
